@@ -16,5 +16,5 @@ do
   esac
   seed=`head -1 $cnf|awk '{print $NF}'`
   echo $seed
-  echo seed >> $log
+  echo $seed >> $log
 done
