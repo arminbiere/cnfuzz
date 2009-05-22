@@ -1,0 +1,16 @@
+#!/bin/sh
+cnf=/tmp/runcnfuzz-$$
+trap "rm -f $cnf" 2
+i=0
+while true
+do
+  echo -n "$i\r"
+  i=`expr $i + 1`
+  rm -f $cnf
+  ./cnfuzz > $cnf
+  $1 $cnf 1>/dev/null 2>/dev/null
+  case $? in
+    10|20) continue;;
+  esac
+  head -1 $cnf|awk '{print $NF}'
+done
