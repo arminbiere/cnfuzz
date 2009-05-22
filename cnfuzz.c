@@ -38,7 +38,7 @@ main (int argc, char ** argv)
       high[i] = low[i] + width[i] - 1;
       m = width[i];
       if (i) m += width[i-1];
-      n = (pick (350, 500) * m) / 100;
+      n = (pick (330, 500) * m) / 100;
       clauses[i] = n;
       printf ("c layer[%d] = [%d..%d] w=%d v=%d c=%d r=%.2f\n",
               i, low[i], high[i], width[i], m, n, n / (double) m);
