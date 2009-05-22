@@ -1,5 +1,7 @@
 #!/bin/sh
 cnf=/tmp/runcnfuzz-$$
+log=runcnfuzz-$$.log
+rm -f $log
 trap "rm -f $cnf" 2
 i=0
 while true
@@ -12,5 +14,7 @@ do
   case $? in
     10|20) continue;;
   esac
-  head -1 $cnf|awk '{print $NF}'
+  seed=`head -1 $cnf|awk '{print $NF}'`
+  echo $seed
+  echo seed >> $log
 done
