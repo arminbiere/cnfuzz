@@ -1,7 +1,7 @@
 CC=gcc
-CFLAGS=-Wall -lm
+CFLAGS=-Wall -g
 all: cnfuzz
-cnfuzz: cnfuzz.c
+cnfuzz: cnfuzz.c makefile
 	$(CC) $(CFLAGS) -o $@ cnfuzz.c
 clean:
 	rm -f cnfuzz
