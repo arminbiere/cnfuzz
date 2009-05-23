@@ -25,7 +25,7 @@ main (int argc, char ** argv)
   seed = (argc > 1) ? atoi (argv[1]) : abs ((times(0) * getpid ()) >> 1);
   printf ("c seed %d\n", seed);
   srand (seed);
-  w = pick (10, 80);
+  w = pick (10, 100);
   printf ("c max width %d\n", w);
   nlayers = pick (1, 100);
   printf ("c layers %d\n", nlayers);

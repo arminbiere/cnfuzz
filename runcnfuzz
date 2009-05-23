@@ -23,15 +23,15 @@ echo "[runcnfuzz] running $prg"
 echo "[runcnfuzz] logging $log"
 while true
 do
-  echo -n "$i\r"
-  i=`expr $i + 1`
   rm -f $cnf
   ./cnfuzz > $cnf
+  seed=`head -1 $cnf|awk '{print $NF}'`
+  echo -n "$i $seed\r"
+  i=`expr $i + 1`
   $prg $cnf 1>/dev/null 2>/dev/null
   case $? in
     10|20) continue;;
   esac
-  seed=`head -1 $cnf|awk '{print $NF}'`
   echo "[runcnfuzz] failing seed: $seed"
   echo $seed >> $log
 done
