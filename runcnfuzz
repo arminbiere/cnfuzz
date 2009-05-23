@@ -19,8 +19,8 @@ log=runcnfuzz-$$.log
 rm -f $log
 trap "rm -f $cnf;exit 1" 2
 i=0
-echo "[runcnf] running $prg"
-echo "[runcnf] logging $log"
+echo "[runcnfuzz] running $prg"
+echo "[runcnfuzz] logging $log"
 while true
 do
   echo -n "$i\r"
@@ -32,6 +32,6 @@ do
     10|20) continue;;
   esac
   seed=`head -1 $cnf|awk '{print $NF}'`
-  echo "[runcnf] failing seed: $seed"
+  echo "[runcnfuzz] failing seed: $seed"
   echo $seed >> $log
 done
