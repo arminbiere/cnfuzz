@@ -24,9 +24,10 @@ echo "[runcnfuzz] logging $log"
 while true
 do
   rm -f $cnf
-  ./cnfuzz > $cnf
+  cnfuzz > $cnf
   seed=`head -1 $cnf|awk '{print $NF}'`
-  echo -n "$i $seed\r"
+  head="`awk '/p cnf /{print $3, $4}' $cnf`"
+  echo -n "$i $seed $head\r"
   i=`expr $i + 1`
   $prg $cnf 1>/dev/null 2>/dev/null
   case $? in
@@ -34,4 +35,8 @@ do
   esac
   echo "[runcnfuzz] failing seed: $seed"
   echo $seed >> $log
+  red=reduced-$seed
+  ddcnfuzzed $seed $prg 1>/dev/null 2>/dev/null
+  head="`awk '/p cnf /{print $3, $4}' $red`"
+  echo "[runcnfuzz] $red $head"
 done
