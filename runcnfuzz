@@ -1,20 +1,37 @@
 #!/bin/sh
+die () {
+  echo "*** runcnfuzz: $*" 1>&2
+  exit 1
+}
+prg=""
+while [ $# -gt 0 ]
+do
+  case $1 in
+    -h) echo "usage: runcnfuzz <prg>";exit 0;;
+    -*) die "invalid command line option";;
+    *) prg=$1;;
+  esac
+  shift
+done
+[ x"$prg" = x ] && die "no program specified"
 cnf=/tmp/runcnfuzz-$$
 log=runcnfuzz-$$.log
 rm -f $log
-trap "rm -f $cnf" 2
+trap "rm -f $cnf;exit 1" 2
 i=0
+echo "[runcnf] running $prg"
+echo "[runcnf] logging $log"
 while true
 do
   echo -n "$i\r"
   i=`expr $i + 1`
   rm -f $cnf
   ./cnfuzz > $cnf
-  $1 $cnf 1>/dev/null 2>/dev/null
+  $prg $cnf 1>/dev/null 2>/dev/null
   case $? in
     10|20) continue;;
   esac
   seed=`head -1 $cnf|awk '{print $NF}'`
-  echo $seed
+  echo "[runcnf] failing seed: $seed"
   echo $seed >> $log
 done
