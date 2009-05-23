@@ -6,9 +6,7 @@
 #include <string.h>
 
 #define MAX 20
-static int seed, nlayers, ** layers, *width, * low, * high, * clauses;
 static int clause[MAX + 1];
-static char * mark;
 
 static int
 pick (int from, int to)
@@ -20,11 +18,16 @@ pick (int from, int to)
 int
 main (int argc, char ** argv)
 {
-  int i, j, k, l, m, n, sign, lit, layer;
+  int seed, nlayers, ** layers, *width, * low, * high, * clauses;
+  int i, j, k, l, m, n, sign, lit, layer, w;
+  char * mark;
+
   seed = (argc > 1) ? atoi (argv[1]) : abs ((times(0) * getpid ()) >> 1);
   printf ("c seed %d\n", seed);
   srand (seed);
-  nlayers = pick (1, 20);
+  w = pick (10, 80);
+  printf ("c max width %d\n", w);
+  nlayers = pick (1, 100);
   printf ("c layers %d\n", nlayers);
   layers = calloc (nlayers, sizeof *layers);
   width = calloc (nlayers, sizeof *width);
@@ -33,12 +36,12 @@ main (int argc, char ** argv)
   clauses = calloc (nlayers, sizeof *clauses);
   for (i = 0; i < nlayers; i++)
     {
-      width[i] = pick (10, 70);
+      width[i] = pick (8, w);
       low[i] = i ? high[i-1] + 1 : 1;
       high[i] = low[i] + width[i] - 1;
       m = width[i];
       if (i) m += width[i-1];
-      n = (pick (330, 500) * m) / 100;
+      n = (pick (300, 450) * m) / 100;
       clauses[i] = n;
       printf ("c layer[%d] = [%d..%d] w=%d v=%d c=%d r=%.2f\n",
               i, low[i], high[i], width[i], m, n, n / (double) m);
@@ -60,7 +63,9 @@ main (int argc, char ** argv)
 
 	  for (k = 0; k < l; k++)
 	    {
-	      layer = pick ((i ? i-1 : i), i);
+	      layer = i;
+	      while (layer && pick (3, 4) == 3)
+		layer--;
 	      sign = (pick (31, 32) == 31) ? 1 : -1;
 	      lit = pick (low[layer], high[layer]);
 	      if (mark[lit]) continue;
