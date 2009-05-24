@@ -39,4 +39,5 @@ do
   ddcnfuzzed $seed $prg 1>/dev/null 2>/dev/null
   head="`awk '/p cnf /{print $3, $4}' $red`"
   echo "[runcnfuzz] $red $head"
+  rm -f bug-$seed
 done
