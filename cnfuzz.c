@@ -77,7 +77,7 @@ main (int argc, char ** argv)
 	      layer = i;
 	      while (layer && pick (3, 4) == 3)
 		layer--;
-	      if (0 && nunused[layer])
+	      if (nunused[layer])
 		{
 		  o = nunused[layer] - 1;
 		  p = pick (0, o);
