@@ -59,8 +59,7 @@ main (int argc, char ** argv)
     }
   n = 0;
   m = high[nlayers-1];
-  mark = malloc (m + 1);
-  memset (mark, 0, m);
+  mark = calloc (m + 1, 1);
   for (i = 0; i < nlayers; i++)
     n += clauses[i];
   printf ("p cnf %d %d\n", m, n);
