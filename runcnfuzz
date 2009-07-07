@@ -34,8 +34,8 @@ do
   $prg $cnf 1>$sol 2>/dev/null
   case $? in
     10) 
-      precochk $cnf $sol >/dev/null
-      [ $? = 0 ] && continue
+      precochk $cnf $sol >/dev/null 2>/dev/null
+      [ $? = 10 ] && continue
       ;;
     20)
       continue;;
