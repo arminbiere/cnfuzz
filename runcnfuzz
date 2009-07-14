@@ -33,7 +33,8 @@ do
   case $? in
     10|20) continue;;
   esac
-  echo "[runcnfuzz] failing seed: $seed"
+  head="`awk '/p cnf /{print $3, $4}' $cnf`"
+  echo "[runcnfuzz] failing seed: $seed $head"
   echo $seed >> $log
   red=reduced-$seed
   ddcnfuzzed $seed $prg 1>/dev/null 2>/dev/null
