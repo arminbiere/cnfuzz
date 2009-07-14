@@ -14,7 +14,7 @@ do
   shift
 done
 [ x"$prg" = x ] && die "no program specified"
-cnf=/tmp/runcnfuzz-$$
+cnf=/tmp/runcnfuzz-$$.cnf
 log=runcnfuzz-$$.log
 rm -f $log
 trap "rm -f $cnf;exit 1" 2
@@ -29,9 +29,16 @@ do
   head="`awk '/p cnf /{print $3, $4}' $cnf`"
   echo -n "$i $seed $head\r"
   i=`expr $i + 1`
-  $prg $cnf 1>/dev/null 2>/dev/null
+  sol=/tmp/runcnfuzz-$$.sol
+  rm -f $sol
+  $prg $cnf 1>$sol 2>/dev/null
   case $? in
-    10|20) continue;;
+    10) 
+      precochk $cnf $sol >/dev/null 2>/dev/null
+      [ $? = 10 ] && continue
+      ;;
+    20)
+      continue;;
   esac
   head="`awk '/p cnf /{print $3, $4}' $cnf`"
   echo "[runcnfuzz] failing seed: $seed $head"
