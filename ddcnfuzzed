@@ -1,3 +1,3 @@
 #!/bin/sh
 cnfuzz $1 > bug-$1
-cnfdd bug-$1 reduced-$1 $2
+cnfdd bug-$1 red-$1 $2

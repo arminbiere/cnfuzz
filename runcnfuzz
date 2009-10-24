@@ -43,9 +43,11 @@ do
   head="`awk '/p cnf /{print $3, $4}' $cnf`"
   echo "[runcnfuzz] failing seed: $seed $head"
   echo $seed >> $log
-  red=reduced-$seed
-  ddcnfuzzed $seed $prg 1>/dev/null 2>/dev/null
+  red=red-$seed
+  bug=bug-$seed
+  mv $cnf $bug
+  cnfdd $bug $red $prg 1>/dev/null 2>/dev/null
   head="`awk '/p cnf /{print $3, $4}' $red`"
   echo "[runcnfuzz] $red $head"
-  rm -f bug-$seed
+  rm -f $bug
 done
