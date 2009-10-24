@@ -41,7 +41,7 @@ do
       continue;;
   esac
   head="`awk '/p cnf /{print $3, $4}' $cnf`"
-  echo "[runcnfuzz] failing seed: $seed $head"
+  echo "[runcnfuzz] bug-$seed $head"
   echo $seed >> $log
   red=red-$seed
   bug=bug-$seed
