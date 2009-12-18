@@ -1,6 +1,6 @@
 #!/bin/sh
 killall runcnfuzz
 killall cnfdd
-rm -f reduced-*
+rm -f red-*
 rm -f bug-*
 rm -f runcnfuzz-*.log
