@@ -9,9 +9,8 @@ do
   case $1 in
     -h) echo "usage: runcnfuzz <prg>";exit 0;;
     -*) die "invalid command line option";;
-    *) prg=$1;;
+    *) prg="$*";break;;
   esac
-  shift
 done
 [ x"$prg" = x ] && die "no program specified"
 cnf=/tmp/runcnfuzz-$$.cnf
