@@ -23,7 +23,7 @@ echo "[runcnfuzz] logging $log"
 while true
 do
   rm -f $cnf
-  cnfuzz > $cnf
+  cnfuzz $CNFUZZOPTIONS > $cnf
   seed=`head -1 $cnf|awk '{print $NF}'`
   head="`awk '/p cnf /{print $3, $4}' $cnf`"
   echo -n "$i $seed $head\r"

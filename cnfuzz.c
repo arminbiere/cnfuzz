@@ -4,6 +4,7 @@
 #include <sys/times.h>
 #include <unistd.h>
 #include <string.h>
+#include <ctype.h>
 
 #define MAX 20
 static int clause[MAX + 1];
@@ -15,16 +16,80 @@ pick (int from, int to)
   return (rand() % (to - from + 1)) + from;
 }
 
+static int
+numstr (const char * str)
+{
+  const char * p;
+  for (p = str; *p; p++)
+    if (!isdigit (*p))
+      return 0;
+  return 1;
+}
+
 int
 main (int argc, char ** argv)
 {
+  int i, j, k, l, m, n, o, p, sign, lit, layer, w, val, min, max, ospread;
   int seed, nlayers, ** layers, *width, * low, * high, * clauses;
-  int i, j, k, l, m, n, o, p, sign, lit, layer, w;
   int ** unused, * nunused;
+  const char * options;
+  char option[100];
+  FILE * file;
   char * mark;
 
-  seed = (argc > 1) ? atoi (argv[1]) : abs ((times(0) * getpid ()) >> 1);
+  seed = -1;
+  options = 0;
+
+  for (i = 1; i < argc; i++) 
+    {
+      if (!strcmp (argv[i], "-h")) 
+	{
+	  printf ("usage: cnfuzz [<seed>][<option-file>]\n");
+	  exit (0);
+	}
+      if (numstr (argv[i])) 
+	{
+	  if (seed >= 0) 
+	    {
+	      fprintf (stderr, "*** cnfuzz: multiple seeds\n");
+	      exit (1);
+	    }
+	  seed = atoi (argv[i]);
+	  if (seed < 0) 
+	    {
+	      fprintf (stderr, "*** cnfuzz: seed overflow\n");
+	      exit (1);
+	    }
+	}
+      else if (options) 
+	{
+	  fprintf (stderr, "*** cnfuzz: multiple option files\n");
+	  exit (1);
+	}
+      else
+	options = argv[i];
+    }
+
+  if (seed < 0) seed = abs ((times(0) * getpid ()) >> 1);
   printf ("c seed %d\n", seed);
+  srand (seed);
+  if (options)
+    {
+      file = fopen (options, "r");
+      ospread = pick (0, 10);
+      printf ("c %d ospread\n", ospread);
+      if (!file)
+	{
+	  fprintf (stderr, "*** cnfuzz: can not read '%s'\n", options);
+	  exit (1);
+	}
+      while (fscanf (file, "%s %d %d %d", option, &val, &min, &max) == 4)
+	{
+	  if (!pick (0, ospread)) val = pick (min, max);
+	  printf ("c --%s=%d\n", option, val);
+	}
+      fclose (file);
+    }
   srand (seed);
   w = pick (10, 70);
   printf ("c max width %d\n", w);
