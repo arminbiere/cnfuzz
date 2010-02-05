@@ -31,7 +31,7 @@ main (int argc, char ** argv)
 {
   int i, j, k, l, m, n, o, p, sign, lit, layer, w, val, min, max, ospread;
   int seed, nlayers, ** layers, *width, * low, * high, * clauses;
-  int ** unused, * nunused;
+  int ** unused, * nunused, allmin, allmax;
   const char * options;
   char option[100];
   FILE * file;
@@ -77,6 +77,10 @@ main (int argc, char ** argv)
     {
       file = fopen (options, "r");
       ospread = pick (0, 10);
+      if ((allmin = pick (0, 1)))
+	printf ("c allmin\n");
+      else if ((allmax = pick (0, 1)))
+	printf ("c allmax\n");
       printf ("c %d ospread\n", ospread);
       if (!file)
 	{
@@ -85,7 +89,12 @@ main (int argc, char ** argv)
 	}
       while (fscanf (file, "%s %d %d %d", option, &val, &min, &max) == 4)
 	{
-	  if (!pick (0, ospread)) val = pick (min, max);
+	  if (!pick (0, ospread)) 
+	    {
+	      if (allmin) val = min;
+	      else if (allmax) val = max;
+	      else val = pick (min, max);
+	    }
 	  printf ("c --%s=%d\n", option, val);
 	}
       fclose (file);
