@@ -14,9 +14,10 @@ do
 done
 [ x"$prg" = x ] && die "no program specified"
 cnf=/tmp/runcnfuzz-$$.cnf
+sol=/tmp/runcnfuzz-$$.sol
 log=runcnfuzz-$$.log
 rm -f $log
-trap "rm -f $cnf;exit 1" 2
+trap "rm -f $cnf $sol;exit 1" 2 9 15
 i=0
 echo "[runcnfuzz] running $prg"
 echo "[runcnfuzz] logging $log"
@@ -26,9 +27,8 @@ do
   cnfuzz $CNFUZZOPTIONS > $cnf
   seed=`head -1 $cnf|awk '{print $NF}'`
   head="`awk '/p cnf /{print $3, $4}' $cnf`"
-  echo -n "$i $seed $head\r"
+  printf "%15d%15d%15d%15d\r" "$i" "$seed" $head
   i=`expr $i + 1`
-  sol=/tmp/runcnfuzz-$$.sol
   rm -f $sol
   $prg $cnf 1>$sol 2>/dev/null
   case $? in
