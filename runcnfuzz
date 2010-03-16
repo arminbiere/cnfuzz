@@ -27,7 +27,7 @@ do
   cnfuzz $CNFUZZOPTIONS > $cnf
   seed=`head -1 $cnf|awk '{print $NF}'`
   head="`awk '/p cnf /{print $3, $4}' $cnf`"
-  printf "%d% d% d% %d\r" "$i" "$seed" $head
+  printf "%d %d %d %d\r" "$i" "$seed" $head
   i=`expr $i + 1`
   rm -f $sol
   $prg $cnf 1>$sol 2>/dev/null
