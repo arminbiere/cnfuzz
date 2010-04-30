@@ -46,7 +46,11 @@ main (int argc, char ** argv)
     {
       if (!strcmp (argv[i], "-h")) 
 	{
-	  printf ("usage: cnfuzz [<seed>][<option-file>]\n");
+	  printf (
+"usage: cnfuzz [-h][<seed>][<option-file>]\n"
+"\n"
+"If the seed is not specified it is calculated from the process id\n"
+"and the current system time (in seconds).\n");
 	  exit (0);
 	}
       if (numstr (argv[i])) 
@@ -73,6 +77,8 @@ main (int argc, char ** argv)
     }
 
   if (seed < 0) seed = abs ((times(0) * getpid ()) >> 1);
+
+  seed = (argc > 1) ? atoi (argv[1]) : abs ((times(0) * getpid ()) >> 1);
   printf ("c seed %d\n", seed);
   srand (seed);
   if (options)
