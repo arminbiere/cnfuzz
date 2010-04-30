@@ -78,7 +78,6 @@ main (int argc, char ** argv)
 
   if (seed < 0) seed = abs ((times(0) * getpid ()) >> 1);
 
-  seed = (argc > 1) ? atoi (argv[1]) : abs ((times(0) * getpid ()) >> 1);
   printf ("c seed %d\n", seed);
   srand (seed);
   if (options)
