@@ -1,3 +1,5 @@
+/* Copyright (c) 2009, Armin Biere, Johannes Kepler University. */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
