@@ -4,13 +4,18 @@ die () {
   exit 1
 }
 prg=""
+qbf=""
+ign=no
 while [ $# -gt 0 ]
 do
   case $1 in
-    -h) echo "usage: runcnfuzz <prg>";exit 0;;
+    -h) echo "usage: runcnfuzz [-h][-q][-i] <prg> [<prgopts>...]";exit 0;;
+    -q) qbf="-q";;
+    -i) ign=yes;;
     -*) die "invalid command line option";;
-    *) prg="$*";break;;
+    *) prg="$*"; break;;
   esac
+  shift
 done
 [ x"$prg" = x ] && die "no program specified"
 cnf=/tmp/runcnfuzz-$$.cnf
@@ -24,8 +29,8 @@ echo "[runcnfuzz] logging $log"
 while true
 do
   rm -f $cnf
-  cnfuzz $CNFUZZOPTIONS > $cnf
-  seed=`head -1 $cnf|awk '{print $NF}'`
+  cnfuzz $qbf $CNFUZZOPTIONS > $cnf
+  seed=`grep 'c seed' $cnf|head -1|awk '{print $NF}'`
   head="`awk '/p cnf /{print $3, $4}' $cnf`"
   printf "%d %d %d %d\r" "$i" "$seed" $head
   i=`expr $i + 1`
@@ -33,11 +38,12 @@ do
   $prg $cnf 1>$sol 2>/dev/null
   case $? in
     10) 
+      [ x"$qbf" = x ] || continue
       precochk $cnf $sol >/dev/null 2>/dev/null
       [ $? = 10 ] && continue
       ;;
-    20)
-      continue;;
+    20) continue;;
+    0) [ $ign = yes ] && continue;;
   esac
   head="`awk '/p cnf /{print $3, $4}' $cnf`"
   echo "[runcnfuzz] bug-$seed $head"
@@ -45,7 +51,12 @@ do
   red=red-$seed
   bug=bug-$seed
   mv $cnf $bug
-  cnfdd $bug $red $prg 1>/dev/null 2>/dev/null
+  if [ x"$qbf" = x ]
+  then
+    cnfdd $bug $red $prg 1>/dev/null 2>/dev/null
+  else
+    qbfdd.py -v -v -o $red $bug $prg 1>/dev/null 2>/dev/null
+  fi
   head="`awk '/p cnf /{print $3, $4}' $red`"
   echo "[runcnfuzz] $red $head"
   rm -f $bug

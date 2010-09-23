@@ -32,8 +32,8 @@ int
 main (int argc, char ** argv)
 {
   int i, j, k, l, m, n, o, p, sign, lit, layer, w, val, min, max, ospread;
+  int ** unused, * nunused, allmin, allmax, qbf, *quant, scramble, * map;
   int seed, nlayers, ** layers, *width, * low, * high, * clauses;
-  int ** unused, * nunused, allmin, allmax, qbf, *quant;
   const char * options;
   char option[100];
   FILE * file;
@@ -121,7 +121,9 @@ main (int argc, char ** argv)
     }
   srand (seed);
   w = pick (10, 70);
-  printf ("c max width %d\n", w);
+  printf ("c width %d\n", w);
+  scramble = pick (-1, 1);
+  printf ("c scramble %d\n", scramble);
   nlayers = pick (1, 20);
   printf ("c layers %d\n", nlayers);
   layers = calloc (nlayers, sizeof *layers);
@@ -159,6 +161,8 @@ main (int argc, char ** argv)
   for (i = 0; i < nlayers; i++)
     n += clauses[i];
   printf ("p cnf %d %d\n", m, n);
+  map = calloc (2*m + 1, sizeof *map);
+  map += m;
   if (qbf) 
     for (i = 0; i < nlayers; i++)
       {
@@ -206,6 +210,8 @@ main (int argc, char ** argv)
 	    mark[abs (clause[k])] = 0;
 	}
     }
+  map -= m;
+  free (map);
   free (mark);
   free (clauses);
   free (high);
