@@ -33,7 +33,7 @@ main (int argc, char ** argv)
 {
   int i, j, k, l, m, n, o, p, sign, lit, layer, w, val, min, max, ospread;
   int ** unused, * nunused, allmin, allmax, qbf, *quant, scramble, * map;
-  int seed, nlayers, ** layers, *width, * low, * high, * clauses;
+  int seed, nlayers, ** layers, *width, * low, * high, * clauses, fp; 
   const char * options;
   char option[100];
   FILE * file;
@@ -90,9 +90,15 @@ main (int argc, char ** argv)
 
   if (seed < 0) seed = abs ((times(0) * getpid ()) >> 1);
 
-  if (qbf) printf ("c qbf\n");
-  printf ("c seed %d\n", seed);
   srand (seed);
+  printf ("c seed %d\n", seed);
+  if (qbf) 
+    {
+      printf ("c qbf\n");
+      fp = pick (0, 3);
+      if (fp)
+	printf ("c but forced to be propositional\n");
+    }
   if (options)
     {
       file = fopen (options, "r");
@@ -137,7 +143,7 @@ main (int argc, char ** argv)
   for (i = 0; i < nlayers; i++)
     {
       width[i] = pick (10, w);
-      quant[i] = qbf ? pick (-1, 1) : 0;
+      quant[i] = (qbf && !fp) ? pick (-1, 1) : 0;
       low[i] = i ? high[i-1] + 1 : 1;
       high[i] = low[i] + width[i] - 1;
       m = width[i];
@@ -163,7 +169,7 @@ main (int argc, char ** argv)
   printf ("p cnf %d %d\n", m, n);
   map = calloc (2*m + 1, sizeof *map);
   map += m;
-  if (qbf) 
+  if (qbf && !fp) 
     for (i = 0; i < nlayers; i++)
       {
 	if (!i && !quant[0]) continue;
