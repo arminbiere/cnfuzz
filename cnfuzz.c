@@ -32,13 +32,14 @@ int
 main (int argc, char ** argv)
 {
   int i, j, k, l, m, n, o, p, sign, lit, layer, w, val, min, max, ospread;
-  int seed, nlayers, ** layers, *width, * low, * high, * clauses;
+  int seed, nlayers, ** layers, *width, * low, * high, * clauses, qbf;
   int ** unused, * nunused, allmin, allmax;
   const char * options;
   char option[100];
   FILE * file;
   char * mark;
 
+  qbf = 0;
   seed = -1;
   options = 0;
 
@@ -47,13 +48,24 @@ main (int argc, char ** argv)
       if (!strcmp (argv[i], "-h")) 
 	{
 	  printf (
-"usage: cnfuzz [-h][<seed>][<option-file>]\n"
+"usage: cnfuzz [-h][-q][<seed>][<option-file>]\n"
+"\n"
+"  -h   print command line option help\n"
+"  -q   generate quantified CNF in QDIMACS format\n"
 "\n"
 "If the seed is not specified it is calculated from the process id\n"
-"and the current system time (in seconds).\n");
+"and the current system time (in seconds).\n"
+"\n"
+"The optional <option-file> lists integer options with their ranges,\n"
+"one option in the format '<opt> <lower> <upper> per line.\n"
+"Those options are fuzzed and embedded into the generated input\n"
+"in comments before the 'p cnf ...' header.\n"
+);
 	  exit (0);
 	}
-      if (numstr (argv[i])) 
+      if (!strcmp (argv[i], "-q")) 
+	qbf = 1;
+      else if (numstr (argv[i])) 
 	{
 	  if (seed >= 0) 
 	    {
