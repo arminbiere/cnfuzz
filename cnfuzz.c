@@ -90,6 +90,7 @@ main (int argc, char ** argv)
 
   if (seed < 0) seed = abs ((times(0) * getpid ()) >> 1);
 
+  if (qbf) printf ("c qbf\n");
   printf ("c seed %d\n", seed);
   srand (seed);
   if (options)
