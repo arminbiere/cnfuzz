@@ -32,8 +32,8 @@ int
 main (int argc, char ** argv)
 {
   int i, j, k, l, m, n, o, p, sign, lit, layer, w, val, min, max, ospread;
-  int seed, nlayers, ** layers, *width, * low, * high, * clauses, qbf;
-  int ** unused, * nunused, allmin, allmax;
+  int seed, nlayers, ** layers, *width, * low, * high, * clauses;
+  int ** unused, * nunused, allmin, allmax, qbf, *quant;
   const char * options;
   char option[100];
   FILE * file;
@@ -124,6 +124,7 @@ main (int argc, char ** argv)
   nlayers = pick (1, 20);
   printf ("c layers %d\n", nlayers);
   layers = calloc (nlayers, sizeof *layers);
+  quant = calloc (nlayers, sizeof *quant);
   width = calloc (nlayers, sizeof *width);
   low = calloc (nlayers, sizeof *low);
   high = calloc (nlayers, sizeof *high);
@@ -133,14 +134,15 @@ main (int argc, char ** argv)
   for (i = 0; i < nlayers; i++)
     {
       width[i] = pick (10, w);
+      quant[i] = qbf ? pick (-1, 1) : 0;
       low[i] = i ? high[i-1] + 1 : 1;
       high[i] = low[i] + width[i] - 1;
       m = width[i];
       if (i) m += width[i-1];
       n = (pick (300, 450) * m) / 100;
       clauses[i] = n;
-      printf ("c layer[%d] = [%d..%d] w=%d v=%d c=%d r=%.2f\n",
-              i, low[i], high[i], width[i], m, n, n / (double) m);
+      printf ("c layer[%d] = [%d..%d] w=%d v=%d c=%d r=%.2f q=%d\n",
+              i, low[i], high[i], width[i], m, n, n / (double) m, quant[i]);
 
       nunused[i] = 2 * (high[i] - low[i] + 1);
       unused[i] = calloc (nunused[i], sizeof *unused[i]);
@@ -156,6 +158,15 @@ main (int argc, char ** argv)
   for (i = 0; i < nlayers; i++)
     n += clauses[i];
   printf ("p cnf %d %d\n", m, n);
+  if (qbf) 
+    for (i = 0; i < nlayers; i++)
+      {
+	if (!i && !quant[0]) continue;
+	fputc (quant[i] < 0 ? 'a' : 'e', stdout);
+	for (j = low[i]; j <= high[i]; j++)
+	  printf (" %d", j);
+	fputs (" 0\n", stdout);
+      }
   for (i = 0; i < nlayers; i++)
     {
       for (j = 0; j < clauses[i]; j++)
@@ -200,6 +211,7 @@ main (int argc, char ** argv)
   free (low);
   free (width);
   free (nunused);
+  free (quant);
   for (i = 0; i < nlayers; i++)
     free (layers[i]), free (unused[i]);
   free (layers);
