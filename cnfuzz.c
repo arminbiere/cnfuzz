@@ -28,13 +28,15 @@ numstr (const char * str)
   return 1;
 }
 
+#define SIGN() ((pick (31,32) == 32) ? -1 : 1)
+
 int
 main (int argc, char ** argv)
 {
   int i, j, k, l, m, n, o, p, sign, lit, layer, w, val, min, max, ospread;
-  int seed, nlayers, ** layers, *width, * low, * high, * clauses;
   int ** unused, * nunused, allmin, allmax, qbf, *quant, scramble, * map;
-  int fp, eqs, ands, *arity;
+  int seed, nlayers, ** layers, *width, * low, * high, * clauses;
+  int fp, eqs, ands, *arity, maxarity, lhs, rhs;
   const char * options;
   char option[100];
   FILE * file;
@@ -167,13 +169,14 @@ main (int argc, char ** argv)
       assert (k == nunused[i]);
     }
   arity = calloc (ands, sizeof *arity);
+  maxarity = w/2;
+  if (maxarity >= MAX)
+    maxarity = MAX - 1;
   for (i = 0; i < ands; i++)
-    arity[i] = pick (2, w/2);
+    arity[i] = pick (2, maxarity);
   n = 0;
-#if 0
-  for (i = 0; i < ands; i++)	// finish 
+  for (i = 0; i < ands; i++)
     n += arity[i] + 1;
-#endif
   m = high[nlayers-1];
   mark = calloc (m + 1, 1);
   for (i = 0; i < nlayers; i++)
@@ -217,8 +220,7 @@ main (int argc, char ** argv)
 		{
 		  lit = pick (low[layer], high[layer]);
 		  if (mark[lit]) continue;
-		  sign = (pick (31, 32) == 31) ? 1 : -1;
-		  lit *= sign;
+		  lit *= SIGN ();
 		}
 	      clause[k] = lit;
 	      mark[abs (lit)] = 1;
@@ -240,12 +242,36 @@ main (int argc, char ** argv)
 	  eqs++;
 	  continue;
 	}
-      sign = (pick (17, 18) == 17) ? 1 : -1;
-      k *= sign;
-      sign = (pick (15, 16) == 16) ? 1 : -1;
-      l *= sign;
+      k *= SIGN ();
+      l *= SIGN ();
       printf ("%d %d 0\n", k, l);
       printf ("%d %d 0\n", -k, -l);
+    }
+  while (--ands >= 0)
+    {
+      l = arity[ands];
+      assert (l < MAX);
+      i = pick (0, nlayers-1);
+      lhs = pick (low[i], high[i]);
+      mark [lhs] = 1;
+      lhs *= SIGN ();
+      clause[0] = lhs;
+      printf ("%d ", lhs);
+      for (k = 1; k <= l; k++)
+	{
+	  j = pick (0, nlayers-1);
+	  rhs = pick (low[j], high[j]);
+	  if (mark [rhs]) { k--; continue; }
+	  mark [rhs] = 1;
+	  rhs *= SIGN ();
+	  clause[k] = rhs;
+	  printf ("%d ", rhs);
+	}
+      printf ("0\n");
+      for (k = 1; k <= l; k++)
+	printf ("%d %d 0\n", -clause[0], -clause[k]);
+      for (k = 0; k <= l; k++)
+	mark [abs (clause[k])] = 0;
     }
   map -= m;
   free (map);
