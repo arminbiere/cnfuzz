@@ -1,4 +1,4 @@
-/* Copyright (c) 2009, Armin Biere, Johannes Kepler University. */
+/* Copyright (c) 2009 - 2010, Armin Biere, Johannes Kepler University. */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -32,8 +32,9 @@ int
 main (int argc, char ** argv)
 {
   int i, j, k, l, m, n, o, p, sign, lit, layer, w, val, min, max, ospread;
+  int seed, nlayers, ** layers, *width, * low, * high, * clauses;
   int ** unused, * nunused, allmin, allmax, qbf, *quant, scramble, * map;
-  int seed, nlayers, ** layers, *width, * low, * high, * clauses, fp; 
+  int fp, eqs, ands, *arity;
   const char * options;
   char option[100];
   FILE * file;
@@ -128,10 +129,14 @@ main (int argc, char ** argv)
   srand (seed);
   w = pick (10, 70);
   printf ("c width %d\n", w);
-  scramble = pick (-1, 1);
+  scramble = pick (-1, 1);			/* TODO finish */
   printf ("c scramble %d\n", scramble);
   nlayers = pick (1, 20);
   printf ("c layers %d\n", nlayers);
+  eqs = pick (0, 2) ? 0 : pick (0, 99);
+  printf ("c equalities %d\n", eqs);
+  ands = pick (0, 1) ? 0 : pick (0,99);
+  printf ("c ands %d\n", ands);
   layers = calloc (nlayers, sizeof *layers);
   quant = calloc (nlayers, sizeof *quant);
   width = calloc (nlayers, sizeof *width);
@@ -161,11 +166,19 @@ main (int argc, char ** argv)
 	  unused[i][k++] = sign * j;
       assert (k == nunused[i]);
     }
+  arity = calloc (ands, sizeof *arity);
+  for (i = 0; i < ands; i++)
+    arity[i] = pick (2, w/2);
   n = 0;
+#if 0
+  for (i = 0; i < ands; i++)	// finish 
+    n += arity[i] + 1;
+#endif
   m = high[nlayers-1];
   mark = calloc (m + 1, 1);
   for (i = 0; i < nlayers; i++)
     n += clauses[i];
+  n += 2*eqs;
   printf ("p cnf %d %d\n", m, n);
   map = calloc (2*m + 1, sizeof *map);
   map += m;
@@ -216,10 +229,29 @@ main (int argc, char ** argv)
 	    mark[abs (clause[k])] = 0;
 	}
     }
+  while (eqs-- > 0)
+    {
+      i = pick (0, nlayers - 1);
+      j = pick (0, nlayers - 1);
+      k = pick (low[i], high[i]);
+      l = pick (low[j], high[j]);
+      if (k == l)
+	{
+	  eqs++;
+	  continue;
+	}
+      sign = (pick (17, 18) == 17) ? 1 : -1;
+      k *= sign;
+      sign = (pick (15, 16) == 16) ? 1 : -1;
+      l *= sign;
+      printf ("%d %d 0\n", k, l);
+      printf ("%d %d 0\n", -k, -l);
+    }
   map -= m;
   free (map);
   free (mark);
   free (clauses);
+  free (arity);
   free (high);
   free (low);
   free (width);
