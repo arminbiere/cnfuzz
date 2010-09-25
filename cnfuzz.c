@@ -95,6 +95,7 @@ main (int argc, char ** argv)
 
   srand (seed);
   printf ("c seed %d\n", seed);
+  fflush (stdout);
   if (qbf) 
     {
       printf ("c qbf\n");
@@ -169,7 +170,7 @@ main (int argc, char ** argv)
       assert (k == nunused[i]);
     }
   arity = calloc (ands, sizeof *arity);
-  maxarity = w/2;
+  maxarity = m/2;
   if (maxarity >= MAX)
     maxarity = MAX - 1;
   for (i = 0; i < ands; i++)
