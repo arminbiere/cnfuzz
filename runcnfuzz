@@ -36,7 +36,8 @@ do
   i=`expr $i + 1`
   rm -f $sol
   $prg $cnf 1>$sol 2>/dev/null
-  case $? in
+  res=$?
+  case $res in
     10) 
       [ x"$qbf" = x ] || continue
       precochk $cnf $sol >/dev/null 2>/dev/null
