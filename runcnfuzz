@@ -40,6 +40,7 @@ do
   case $res in
     10) 
       [ x"$qbf" = x ] || continue
+      [ $ign = yes ] && continue
       precochk $cnf $sol >/dev/null 2>/dev/null
       [ $? = 10 ] && continue
       ;;
@@ -52,12 +53,12 @@ do
   red=red-$seed
   bug=bug-$seed
   mv $cnf $bug
-  if [ x"$qbf" = x ]
-  then
+  #if [ x"$qbf" = x ]
+  #then
     cnfdd $bug $red $prg 1>/dev/null 2>/dev/null
-  else
-    qbfdd.py -v -v -o $red $bug $prg 1>/dev/null 2>/dev/null
-  fi
+  #else
+  #  qbfdd.py -v -v -o $red $bug $prg 1>/dev/null 2>/dev/null
+  #fi
   head="`awk '/p cnf /{print $3, $4}' $red`"
   echo "[runcnfuzz] $red $head"
   rm -f $bug
