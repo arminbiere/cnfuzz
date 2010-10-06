@@ -26,6 +26,8 @@ trap "rm -f $cnf $sol;exit 1" 2 9 15
 i=0
 echo "[runcnfuzz] running $prg"
 echo "[runcnfuzz] logging $log"
+[ x"$qbf" = x ] || echo "[runcnfuzz] generating QBF formulas"
+[ $ign = yes ] || echo "[runcnfuzz] ignoring witness and zero exit code"
 while true
 do
   rm -f $cnf
