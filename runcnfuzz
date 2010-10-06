@@ -27,7 +27,7 @@ i=0
 echo "[runcnfuzz] running $prg"
 echo "[runcnfuzz] logging $log"
 [ x"$qbf" = x ] || echo "[runcnfuzz] generating QBF formulas"
-[ $ign = yes ] || echo "[runcnfuzz] ignoring witness and zero exit code"
+[ $ign = yes ] && echo "[runcnfuzz] ignoring witness and zero exit code"
 while true
 do
   rm -f $cnf
