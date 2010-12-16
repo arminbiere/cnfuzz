@@ -52,8 +52,8 @@ do
   head="`awk '/p cnf /{print $3, $4}' $cnf`"
   echo "[runcnfuzz] bug-$seed $head"
   echo $seed >> $log
-  red=red-$seed
-  bug=bug-$seed
+  red=red-$seed.cnf
+  bug=bug-$seed.cnf
   mv $cnf $bug
   #if [ x"$qbf" = x ]
   #then
