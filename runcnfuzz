@@ -72,5 +72,5 @@ do
   head="`awk '/p cnf /{print $3, $4}' $red`"
   echo "[runcnfuzz] $red $head"
   rm -f $bug
-  [ $first = yes ] && break
+  [ $first = yes ] && exit 0
 done
