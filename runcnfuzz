@@ -6,10 +6,14 @@ die () {
 prg=""
 qbf=""
 ign=no
+first=no
+nodd=no
 while [ $# -gt 0 ]
 do
   case $1 in
-    -h) echo "usage: runcnfuzz [-h][-q][-i] <prg> [<prgopts>...]";exit 0;;
+    -h) echo "usage: runcnfuzz [-h][-q][-i][-f][-n] <prg> [<prgopts>...]";exit 0;;
+    -f) first=yes;;
+    -n) nodd=yes;;
     -q) qbf="-q";;
     -i) ign=yes;;
     -*) die "invalid command line option";;
@@ -57,11 +61,16 @@ do
   mv $cnf $bug
   #if [ x"$qbf" = x ]
   #then
+  if [ $nodd = no ]
     cnfdd $bug $red $prg 1>/dev/null 2>/dev/null
+  else
+    cp $bug $red
+  fi
   #else
   #  qbfdd.py -v -v -o $red $bug $prg 1>/dev/null 2>/dev/null
   #fi
   head="`awk '/p cnf /{print $3, $4}' $red`"
   echo "[runcnfuzz] $red $head"
   rm -f $bug
+  [ $first = yes ] && break
 done
