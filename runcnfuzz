@@ -62,6 +62,7 @@ do
   #if [ x"$qbf" = x ]
   #then
   if [ $nodd = no ]
+  then
     cnfdd $bug $red $prg 1>/dev/null 2>/dev/null
   else
     cp $bug $red
