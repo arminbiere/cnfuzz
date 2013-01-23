@@ -8,14 +8,17 @@ qbf=""
 ign=no
 first=no
 nodd=no
+keep=no
 while [ $# -gt 0 ]
 do
   case $1 in
-    -h) echo "usage: runcnfuzz [-h][-q][-i][-f][-n] <prg> [<prgopts>...]";exit 0;;
+    -h) echo "usage: runcnfuzz [-h][-q][-i][-f][-n][-k] <prg> [<prgopts>...]";exit 0;;
     -f) first=yes;;
     -n) nodd=yes;;
     -q) qbf="-q";;
     -i) ign=yes;;
+    -k) keep=yes;;
+    --version) echo "2"; exit 0;;
     -*) die "invalid command line option";;
     *) prg="$*"; break;;
   esac
@@ -72,6 +75,6 @@ do
   #fi
   head="`awk '/p cnf /{print $3, $4}' $red`"
   echo "[runcnfuzz] $red $head"
-  rm -f $bug
+  [ $keep = no ] && rm -f $bug
   [ $first = yes ] && exit 0
 done
