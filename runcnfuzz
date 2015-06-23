@@ -8,7 +8,6 @@ qbf=""
 ign=no
 first=no
 nodd=no
-keep=no
 while [ $# -gt 0 ]
 do
   case $1 in
@@ -17,7 +16,6 @@ do
     -n) nodd=yes;;
     -q) qbf="-q";;
     -i) ign=yes;;
-    -k) keep=yes;;
     --version) echo "2"; exit 0;;
     -*) die "invalid command line option";;
     *) prg="$*"; break;;
@@ -57,10 +55,10 @@ do
     0) [ $ign = yes ] && continue;;
   esac
   head="`awk '/p cnf /{print $3, $4}' $cnf`"
-  echo "[runcnfuzz] bug-$seed $head"
-  echo $seed >> $log
   red=red-$seed.cnf
   bug=bug-$seed.cnf
+  echo "[runcnfuzz] $bug $head"
+  echo $seed >> $log
   mv $cnf $bug
   #if [ x"$qbf" = x ]
   #then
@@ -75,6 +73,5 @@ do
   #fi
   head="`awk '/p cnf /{print $3, $4}' $red`"
   echo "[runcnfuzz] $red $head"
-  [ $keep = no ] && rm -f $bug
   [ $first = yes ] && exit 0
 done
