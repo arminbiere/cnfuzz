@@ -12,10 +12,12 @@
 static int clause[MAX + 1];
 
 static int
-pick (int from, int to)
+pick (long from, long to)
 {
   assert (from <= to);
-  return (rand() % (to - from + 1)) + from;
+  long delta = to - from;
+  long res = (rand () % (delta + 1)) + from;
+  return res;
 }
 
 static int
