@@ -38,13 +38,15 @@ main (int argc, char ** argv)
   int i, j, k, l, m, n, o, p, sign, lit, layer, w, val, min, max, ospread;
   int ** unused, * nunused, allmin, allmax, qbf, *quant, scramble, * map;
   int seed, nlayers, ** layers, *width, * low, * high, * clauses;
-  int fp, eqs, ands, *arity, maxarity, lhs, rhs;
+  int fp, eqs, ands, *arity, maxarity, lhs, rhs, tiny, small;
   const char * options;
   char option[100];
   FILE * file;
   char * mark;
 
   qbf = 0;
+  tiny = 0;
+  small = 0;
   seed = -1;
   options = 0;
 
@@ -58,6 +60,9 @@ main (int argc, char ** argv)
 "  -h   print command line option help\n"
 "  -q   generate quantified CNF in QDIMACS format\n"
 "\n"
+"  --tiny   between 5 and 10 variables per layer\n"
+"  --small  between 10 and 20 variables per layer\n"
+"\n"
 "If the seed is not specified it is calculated from the process id\n"
 "and the current system time (in seconds).\n"
 "\n"
@@ -70,6 +75,10 @@ main (int argc, char ** argv)
 	}
       if (!strcmp (argv[i], "-q")) 
 	qbf = 1;
+      else if (!strcmp (argv[i], "--tiny")) 
+	tiny = 1;
+      else if (!strcmp (argv[i], "--small")) 
+	small = 1;
       else if (numstr (argv[i])) 
 	{
 	  if (seed >= 0) 
@@ -132,11 +141,14 @@ main (int argc, char ** argv)
       fclose (file);
     }
   srand (seed);
-  w = pick (10, 70);
+  if (tiny) w = pick (5, 10);
+  else if (small) w = pick (10, 20);
+  else w = pick (10, 70);
   printf ("c width %d\n", w);
   scramble = pick (-1, 1);			/* TODO finish */
   printf ("c scramble %d\n", scramble);
-  nlayers = pick (1, 20);
+  if (tiny || small) nlayers = pick (1, 3);
+  else nlayers = pick (1, 20);
   printf ("c layers %d\n", nlayers);
   eqs = pick (0, 2) ? 0 : pick (0, 99);
   printf ("c equalities %d\n", eqs);
@@ -152,7 +164,7 @@ main (int argc, char ** argv)
   nunused = calloc (nlayers, sizeof *nunused);
   for (i = 0; i < nlayers; i++)
     {
-      width[i] = pick (10, w);
+      width[i] = pick (tiny ? 5 : 10, w);
       quant[i] = (qbf && !fp) ? pick (-1, 1) : 0;
       low[i] = i ? high[i-1] + 1 : 1;
       high[i] = low[i] + width[i] - 1;
