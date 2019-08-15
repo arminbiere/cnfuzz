@@ -5,17 +5,19 @@ die () {
 }
 prg=""
 qbf=""
-ign=no
+ignorewitness=no
+ignorestatus=no
 first=no
 nodd=no
 while [ $# -gt 0 ]
 do
   case $1 in
-    -h) echo "usage: runcnfuzz [-h][-q][-i][-f][-n][-k] <prg> [<prgopts>...]";exit 0;;
+    -h) echo "usage: runcnfuzz [-h][-q][-i][-I][-f][-n][-k] <prg> [<prgopts>...]";exit 0;;
     -f) first=yes;;
     -n) nodd=yes;;
     -q) qbf="-q";;
-    -i) ign=yes;;
+    -i) ignorewitness=yes;ignorestatus=yes;;
+    -I) ignorestatus=yes;;
     --version) echo "2"; exit 0;;
     -*) die "invalid command line option";;
     *) prg="$*"; break;;
@@ -32,7 +34,8 @@ i=0
 echo "[runcnfuzz] running $prg"
 echo "[runcnfuzz] logging $log"
 [ x"$qbf" = x ] || echo "[runcnfuzz] generating QBF formulas"
-[ $ign = yes ] && echo "[runcnfuzz] ignoring witness and zero exit code"
+[ $ignorestatus = yes ] && echo "[runcnfuzz] ignoring zero exit code"
+[ $ignorewitness = yes ] && echo "[runcnfuzz] ignoring witness"
 while true
 do
   rm -f $cnf
@@ -47,12 +50,12 @@ do
   case $res in
     10) 
       [ x"$qbf" = x ] || continue
-      [ $ign = yes ] && continue
+      [ $ignorewitness = yes ] && continue
       precochk $cnf $sol >/dev/null 2>/dev/null
       [ $? = 10 ] && continue
       ;;
     20) continue;;
-    0) [ $ign = yes ] && continue;;
+    0) [ $ignorestatus = yes ] && continue;;
   esac
   head="`awk '/p cnf /{print $3, $4}' $cnf`"
   red=red-$seed.cnf
