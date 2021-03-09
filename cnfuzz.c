@@ -36,9 +36,9 @@ int
 main (int argc, char ** argv)
 {
   int i, j, k, l, m, n, o, p, sign, lit, layer, w, val, min, max, ospread;
+  int fp, eqs, ands, *arity, maxarity, lhs, rhs, tiny, small, xors3, xors4;
   int ** unused, * nunused, allmin, allmax, qbf, *quant, scramble, * map;
   int seed, nlayers, ** layers, *width, * low, * high, * clauses;
-  int fp, eqs, ands, *arity, maxarity, lhs, rhs, tiny, small;
   const char * options;
   char option[100];
   FILE * file;
@@ -153,7 +153,11 @@ main (int argc, char ** argv)
   eqs = pick (0, 2) ? 0 : pick (0, 99);
   printf ("c equalities %d\n", eqs);
   ands = pick (0, 1) ? 0 : pick (0,99);
+  xors3 = pick (0, 3) ? 0 : pick (0,49);
+  xors4 = pick (0, 4) ? 0 : pick (0,29);
   printf ("c ands %d\n", ands);
+  printf ("c xors3 %d\n", xors3);
+  printf ("c xors4 %d\n", xors4);
   layers = calloc (nlayers, sizeof *layers);
   quant = calloc (nlayers, sizeof *quant);
   width = calloc (nlayers, sizeof *width);
@@ -197,6 +201,8 @@ main (int argc, char ** argv)
   for (i = 0; i < nlayers; i++)
     n += clauses[i];
   n += 2*eqs;
+  n += 4*xors3;
+  n += 8*xors4;
   printf ("p cnf %d %d\n", m, n);
   map = calloc (2*m + 1, sizeof *map);
   map += m;
@@ -287,6 +293,36 @@ main (int argc, char ** argv)
 	printf ("%d %d 0\n", -clause[0], -clause[k]);
       for (k = 0; k <= l; k++)
 	mark [abs (clause[k])] = 0;
+    }
+  while (--xors3 >= 0)
+    {
+      int lits[3];
+      for (int i = 0; i < 3; i++)
+	{
+	  j = pick (0, nlayers-1);
+	  lits[i] = SIGN () * pick (low[j], high[j]);
+	}
+      printf ("%d %d %d 0\n", lits[0], lits[1], lits[2]);
+      printf ("%d %d %d 0\n", lits[0], -lits[1], -lits[2]);
+      printf ("%d %d %d 0\n", -lits[0], lits[1], -lits[2]);
+      printf ("%d %d %d 0\n", -lits[0], -lits[1], lits[2]);
+    }
+  while (--xors4 >= 0)
+    {
+      int lits[4];
+      for (int i = 0; i < 4; i++)
+	{
+	  j = pick (0, nlayers-1);
+	  lits[i] = SIGN () * pick (low[j], high[j]);
+	}
+      printf ("%d %d %d %d 0\n", lits[0], lits[1], lits[2], lits[3]);
+      printf ("%d %d %d %d 0\n", lits[0], lits[1], -lits[2], -lits[3]);
+      printf ("%d %d %d %d 0\n", lits[0], -lits[1], lits[2], -lits[3]);
+      printf ("%d %d %d %d 0\n", lits[0], -lits[1], -lits[2], lits[3]);
+      printf ("%d %d %d %d 0\n", -lits[0], lits[1], lits[2], -lits[3]);
+      printf ("%d %d %d %d 0\n", -lits[0], lits[1], -lits[2], lits[3]);
+      printf ("%d %d %d %d 0\n", -lits[0], -lits[1], lits[2], lits[3]);
+      printf ("%d %d %d %d 0\n", -lits[0], -lits[1], -lits[2], -lits[3]);
     }
   map -= m;
   free (map);
