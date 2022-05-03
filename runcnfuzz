@@ -25,11 +25,13 @@ do
   shift
 done
 [ x"$prg" = x ] && die "no program specified"
-cnf=/tmp/runcnfuzz-$$.cnf
-sol=/tmp/runcnfuzz-$$.sol
+base=/tmp/runcnfuzz-$$
+cnf=$base.cnf
+sol=$base.sol
+err=$base.err
 log=runcnfuzz-$$.log
 rm -f $log
-trap "rm -f $cnf $sol;exit 1" 2 9 15
+trap "rm -f $base*;exit 1" 2 9 15
 i=0
 echo "[runcnfuzz] running $prg"
 echo "[runcnfuzz] logging $log"
@@ -45,7 +47,7 @@ do
   printf "%d %d %d %d\r" "$i" "$seed" $head
   i=`expr $i + 1`
   rm -f $sol
-  $prg $cnf 1>$sol 2>/dev/null
+  $prg $cnf 1>$sol 2>$err
   res=$?
   case $res in
     10) 
@@ -57,6 +59,8 @@ do
     20) continue;;
     0) [ $ignorestatus = yes ] && continue;;
   esac
+  cp -p $sol bug-$seed.log
+  cp -p $err bug-$seed.err
   head="`awk '/p cnf /{print $3, $4}' $cnf`"
   red=red-$seed.cnf
   bug=bug-$seed.cnf
