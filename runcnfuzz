@@ -30,7 +30,7 @@ cnf=$base.cnf
 sol=$base.sol
 err=$base.err
 log=runcnfuzz-$$.log
-rm -f $log
+rm -f $base*
 trap "rm -f $base*;exit 1" 2 9 15
 i=0
 echo "[runcnfuzz] running $prg"
@@ -82,3 +82,4 @@ do
   echo "[runcnfuzz] $red $head"
   [ $first = yes ] && exit 0
 done
+rm -f $base*
