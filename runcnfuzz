@@ -9,6 +9,7 @@ ignorewitness=no
 ignorestatus=no
 first=no
 nodd=no
+cnfuzzopts=""
 while [ $# -gt 0 ]
 do
   case $1 in
@@ -19,6 +20,8 @@ do
     -i) ignorewitness=yes;ignorestatus=yes;;
     -I) ignorestatus=yes;;
     --version) echo "2"; exit 0;;
+    --tiny) cnfuzzopts="$cnfuzzopts --tiny";;
+    --small) cnfuzzopts="$cnfuzzopts --small";;
     -*) die "invalid command line option";;
     *) prg="$*"; break;;
   esac
@@ -41,7 +44,7 @@ echo "[runcnfuzz] logging $log"
 while true
 do
   rm -f $cnf
-  cnfuzz $qbf $CNFUZZOPTIONS > $cnf
+  cnfuzz $cnfuzzopts $qbf $CNFUZZOPTIONS > $cnf
   seed=`grep 'c seed' $cnf|head -1|awk '{print $NF}'`
   head="`awk '/p cnf /{print $3, $4}' $cnf`"
   printf "%d %d %d %d\r" "$i" "$seed" $head
