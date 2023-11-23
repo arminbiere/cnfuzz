@@ -102,7 +102,11 @@ main (int argc, char ** argv)
 	options = argv[i];
     }
 
-  if (seed < 0) seed = abs ((times(0) * getpid ()) >> 1);
+  if (seed < 0) {
+    struct tms dummy;
+    seed = ((unsigned)(times(&dummy) * getpid ()) >> 1);
+    assert (seed >= 0);
+  }
 
   srand (seed);
   printf ("c seed %d\n", seed);
