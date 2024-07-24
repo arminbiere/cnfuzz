@@ -1,4 +1,9 @@
 #!/bin/sh
+usage () {
+cat <<EOF
+usage: runcnfuzz [-h][-q][-i][-I][-f][-n][-k][-t <sec>] <prg> [ <arg> ... ]
+EOF
+}
 die () {
   echo "*** runcnfuzz: $*" 1>&2
   exit 1
@@ -10,10 +15,11 @@ ignorestatus=no
 first=no
 nodd=no
 cnfuzzopts=""
+TIMEOUT=""
 while [ $# -gt 0 ]
 do
   case $1 in
-    -h) echo "usage: runcnfuzz [-h][-q][-i][-I][-f][-n][-k] <prg> [<prgopts>...]";exit 0;;
+    -h) usage; exit 0;;
     -f) first=yes;;
     -n) nodd=yes;;
     -q) qbf="-q";;
@@ -22,6 +28,13 @@ do
     --version) echo "2"; exit 0;;
     --tiny) cnfuzzopts="$cnfuzzopts --tiny";;
     --small) cnfuzzopts="$cnfuzzopts --small";;
+    -t)
+      shift
+      [ $# = 0 ] && die "argument to '-t' missing"
+      TIMEOUT="$1"
+      export TIMEOUT
+      TIMEOUT10="`expr $TIMEOUT10 \* 10`"
+      ;;
     -*) die "invalid command line option";;
     *) prg="$*"; break;;
   esac
@@ -72,11 +85,13 @@ do
   mv $cnf $bug
   #if [ x"$qbf" = x ]
   #then
-  if [ $nodd = no ]
+  if [ $nodd = yes ]
   then
+    cp $bug $red
+  elif [ x"TIMEOUT10" = x ]
     cnfdd $bug $red $prg 1>/dev/null 2>/dev/null
   else
-    cp $bug $red
+    TIMEOUT="$TIMEOUT10" cnfdd $bug $red $prg 1>/dev/null 2>/dev/null
   fi
   #else
   #  qbfdd.py -v -v -o $red $bug $prg 1>/dev/null 2>/dev/null
