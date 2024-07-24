@@ -33,7 +33,7 @@ do
       [ $# = 0 ] && die "argument to '-t' missing"
       TIMEOUT="$1"
       export TIMEOUT
-      TIMEOUT10="`expr $TIMEOUT10 \* 10`"
+      TIMEOUT10="`expr $TIMEOUT \* 10`"
       ;;
     -*) die "invalid command line option";;
     *) prg="$*"; break;;
@@ -89,6 +89,7 @@ do
   then
     cp $bug $red
   elif [ x"TIMEOUT10" = x ]
+  then
     cnfdd $bug $red $prg 1>/dev/null 2>/dev/null
   else
     TIMEOUT="$TIMEOUT10" cnfdd $bug $red $prg 1>/dev/null 2>/dev/null
