@@ -31,7 +31,7 @@ Springer 2010
 <br>
 [ <a href="https://cca.informatik.uni-freiburg.de/papers/BrummayerLonsingBiere-SAT10.pdf">paper</a>
 | <a href="https://cca.informatik.uni-freiburg.de/papers/BrummayerLonsingBiere-SAT10.bib">bibtex</a>
-| <a href="https:://github.com/arminbiere/cnfuzz">cnfuzz</a>
+| <a href="https://github.com/arminbiere/cnfuzz">cnfuzz</a>
 | <a href="https://cca.informatik.uni-freiburg.de/qbfuzz">qbfuzz</a>
 | <a href="https://cca.informatik.uni-freiburg.de/qbfdd">qbfdd</a>
 ]
