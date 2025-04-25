@@ -17,9 +17,9 @@ our CNF delta-debugger `cnfdd` too (used by the scripts in this
 repository).
 
 <p>
-<a href="/papers/BrummayerLonsingBiere-SAT10.pdf">Automated Testing and Debugging of SAT and QBF Solvers</a>
+<a href="https://cca.informatik-uni-freiburg.de/papers/BrummayerLonsingBiere-SAT10.pdf">Automated Testing and Debugging of SAT and QBF Solvers</a>
 <br>
-Robert Brummayer, Florian Lonsing, <a href="/biere/index.html#publications">Armin Biere</a>
+Robert Brummayer, Florian Lonsing, <a href="https://cca.informatik-uni-freiburg.de/biere/index.html#publications">Armin Biere</a>
 <br>
 <i>Proc.&nbsp;13th Intl.&nbsp;Conf.&nbsp;on Theory and Applications of Satisfiability Testing (SAT'10)</i>
 <br>
@@ -29,10 +29,10 @@ vol.&nbsp;6175,
 pages 44-57,
 Springer 2010
 <br>
-[ <a href="/papers/BrummayerLonsingBiere-SAT10.pdf">paper</a>
-| <a href="/papers/BrummayerLonsingBiere-SAT10.bib">bibtex</a>
+[ <a href="https://cca.informatik-uni-freiburg.de/papers/BrummayerLonsingBiere-SAT10.pdf">paper</a>
+| <a href="https://cca.informatik-uni-freiburg.de/papers/BrummayerLonsingBiere-SAT10.bib">bibtex</a>
 | <a href="https:://github.com/arminbiere/cnfuzz">cnfuzz</a>
-| <a href="/qbfuzz">qbfuzz</a>
-| <a href="/qbfdd">qbfdd</a>
+| <a href="https://cca.informatik-uni-freiburg.de/qbfuzz">qbfuzz</a>
+| <a href="https://cca.informatik-uni-freiburg.de/qbfdd">qbfdd</a>
 ]
 </p>
