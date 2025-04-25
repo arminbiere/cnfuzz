@@ -1,0 +1,38 @@
+CNF Fuzzer
+----------
+
+This is our external CNF fuzzer we have been using since 2007.
+
+External means that we simply fuzz CNF files.  This is enough for
+stand-alone solvers (such as `Kissat`), but in general we consider model
+based testing through the API as way superior (as `mobical` does for
+`CaDiCaL`).
+
+In any case you may want to consider `option fuzzing` and also externalize
+as many parameters as possible of your software and turn them into options,
+such that they can be fuzzed and particularly delta-debugged.
+
+And while talking about delta-debugging, you might want to checkout
+our CNF delta-debugger `cnfdd` too (used by the scripts in this
+repository).
+
+<p>
+<a href="/papers/BrummayerLonsingBiere-SAT10.pdf">Automated Testing and Debugging of SAT and QBF Solvers</a>
+<br>
+Robert Brummayer, Florian Lonsing, <a href="/biere/index.html#publications">Armin Biere</a>
+<br>
+<i>Proc.&nbsp;13th Intl.&nbsp;Conf.&nbsp;on Theory and Applications of Satisfiability Testing (SAT'10)</i>
+<br>
+<a href="https://www.springer.com/gp/computer-science/lncs">Lecture Notes in Computer Science (LNCS)</a>
+<br>
+vol.&nbsp;6175,
+pages 44-57,
+Springer 2010
+<br>
+[ <a href="/papers/BrummayerLonsingBiere-SAT10.pdf">paper</a>
+| <a href="/papers/BrummayerLonsingBiere-SAT10.bib">bibtex</a>
+| <a href="https:://github.com/arminbiere/cnfuzz">cnfuzz</a>
+| <a href="/qbfuzz">qbfuzz</a>
+| <a href="/qbfdd">qbfdd</a>
+]
+</p>
