@@ -69,8 +69,7 @@ do
     10) 
       [ x"$qbf" = x ] || continue
       [ $ignorewitness = yes ] && continue
-      dimocheck $cnf $sol >/dev/null 2>/dev/null
-      [ $? = 10 ] && continue
+      dimocheck $cnf $sol >/dev/null 2>/dev/null && continue
       ;;
     20) continue;;
     0) [ $ignorestatus = yes ] && continue;;
