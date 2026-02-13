@@ -69,7 +69,7 @@ do
     10) 
       [ x"$qbf" = x ] || continue
       [ $ignorewitness = yes ] && continue
-      precochk $cnf $sol >/dev/null 2>/dev/null
+      dimocheck $cnf $sol >/dev/null 2>/dev/null
       [ $? = 10 ] && continue
       ;;
     20) continue;;
